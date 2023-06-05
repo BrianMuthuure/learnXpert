@@ -13,6 +13,7 @@ class UserAdmin(BaseUserAdmin):
         "email",
         "first_name",
         "last_name",
+        "email_verified",
         "is_active",
         "is_superuser",
         "is_staff",
