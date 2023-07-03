@@ -2,12 +2,35 @@ from django.apps import apps
 from django.forms.models import modelform_factory
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.base import TemplateResponseMixin, View
 from .custom_mixins import OwnerCourseMixin, OwnerEditMixin
-from .models import Course, Module, Content
+from .models import Course, Module, Content, Subject
 from .forms import ModuleFormSet
+from django.db.models import Count
 from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
+
+
+class CourseListView(TemplateResponseMixin, View):
+    nodel = Course
+    template_name = 'courses/course/list.html'
+
+    def get(self, request, subject=None):
+        subjects = Subject.objects.annotate(total_courses=Count('courses'))
+        courses = Course.objects.annotate(total_modules=Count('modules'))
+        if subject:
+            subject = get_object_or_404(Subject, slug=subject)
+            courses = courses.filter(subject=subject)
+        context = {
+            'subjects': subjects, 'subject': subject, 'courses': courses
+        }
+        return self.render_to_response(context)
+
+
+class CourseDetailView(DetailView):
+    model = Course
+    template_name = 'courses/course/detail.html'
 
 
 class ManageCourseListView(OwnerCourseMixin, ListView):

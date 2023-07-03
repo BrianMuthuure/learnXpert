@@ -30,6 +30,7 @@ THIRD_PARTY_APPS = []
 LOCAL_APPS = [
     'apps.courses.apps.CoursesConfig',
     'apps.users.apps.UsersConfig',
+    'apps.students.apps.StudentsConfig',
 ]
 
 INSTALLED_APPS = CUSTOM_APPS + THIRD_PARTY_APPS + LOCAL_APPS
