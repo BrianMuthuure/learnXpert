@@ -12,7 +12,7 @@ class OrderField(models.PositiveIntegerField):
         for fields: The fields to be used for ordering
         """
         self.for_fields = for_fields
-        super(OrderField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def pre_save(self, model_instance, add):
         """
@@ -35,4 +35,4 @@ class OrderField(models.PositiveIntegerField):
             setattr(model_instance, self.attname, value)
             return value
         else:
-            return super(OrderField, self).pre_save(model_instance, add)
+            return super().pre_save(model_instance, add)

@@ -11,24 +11,34 @@ class TimeStampedModel(models.Model):
     An abstract base class model that provides self-updating
     ``created`` and ``modified`` fields.
     """
-    created = models.DateTimeField(auto_now_add=True, verbose_name="Created", help_text="Date and time of creation")
-    modified_at = models.DateTimeField(auto_now=True, verbose_name="Modified",
-                                       help_text="Date and time of modification")
+    created = models.DateTimeField(
+        auto_now_add=True, verbose_name="Created",
+        help_text="Date and time of creation")
+    modified_at = models.DateTimeField(
+        auto_now=True, verbose_name="Modified",
+        help_text="Date and time of modification")
 
     class Meta:
         abstract = True
 
 
 class Subject(TimeStampedModel):
-    """
-    Subject model
-    """
     title = models.CharField(
-        max_length=200, verbose_name="Title", help_text="Title of the subject")
+        max_length=200,
+        verbose_name="Title",
+        help_text="Title of the subject"
+    )
     slug = models.SlugField(
-        max_length=200, unique=True, verbose_name="Slug", help_text="Slug of the subject")
+        max_length=200,
+        unique=True,
+        verbose_name="Slug",
+        help_text="Slug of the subject"
+    )
     description = models.TextField(
-        verbose_name="Description", help_text="Description of the subject", blank=True, null=True)
+        verbose_name="Description",
+        help_text="Description of the subject",
+        blank=True, null=True
+    )
 
     class Meta:
         verbose_name = "Subject"
@@ -43,19 +53,34 @@ class Course(TimeStampedModel):
     Course model
     """
     title = models.CharField(
-        max_length=200, verbose_name="Title", help_text="Title of the course")
-    instructor = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="courses_created",
-        verbose_name="Instructor", help_text="Instructor of the course")
+        max_length=200,
+        verbose_name="Title",
+        help_text="Title of the course"
+    )
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="courses_created",
+        verbose_name="owner",
+        help_text="Instructor of the course"
+    )
     subject = models.ForeignKey(
-        Subject, on_delete=models.CASCADE, related_name="courses",
-        verbose_name="Subject", help_text="Subject of the course")
+        Subject,
+        on_delete=models.CASCADE,
+        related_name="courses",
+        verbose_name="Subject",
+        help_text="Subject of the course"
+    )
     slug = models.SlugField(
-        max_length=200, unique=True, verbose_name="Slug",
-        help_text="Slug of the course")
-    overview = models.TextField(verbose_name="Overview", help_text="Course overview")
-    prerequisites = models.TextField(verbose_name="Prerequisites", help_text="Course prerequisites")
-    duration = models.DurationField(verbose_name="Duration", help_text="Course duration")
+        max_length=200,
+        unique=True,
+        verbose_name="Slug",
+        help_text="Slug of the course"
+    )
+    overview = models.TextField(
+        verbose_name="Overview",
+        help_text="Course overview"
+    )
 
     class Meta:
         verbose_name = "Course"
@@ -72,12 +97,26 @@ class Module(TimeStampedModel):
     Module model
     """
     course = models.ForeignKey(
-        Course, on_delete=models.CASCADE, related_name="modules",
-        verbose_name="Course", help_text="Course linked to the module")
+        Course,
+        on_delete=models.CASCADE,
+        related_name="modules",
+        verbose_name="Course",
+        help_text="Course linked to the module"
+    )
     title = models.CharField(
-        max_length=200, verbose_name="Title", help_text="Title of the module")
-    description = models.TextField(verbose_name="Description", help_text="Description of the module")
-    order = OrderField(blank=True, for_fields=["course"], verbose_name="Order", help_text="Order of the module")
+        max_length=200,
+        verbose_name="Title",
+        help_text="Title of the module"
+    )
+    description = models.TextField(
+        verbose_name="Description",
+        help_text="Description of the module"
+    )
+    order = OrderField(
+        blank=True,
+        for_fields=["course"],
+        help_text="Order of the module"
+    )
 
     class Meta:
         verbose_name = "Module"
@@ -97,16 +136,22 @@ class Content(models.Model):
     item: A generic foreign key to the related object, combining the two previous fields
     """
     module = models.ForeignKey(
-        Module, on_delete=models.CASCADE, related_name="contents",
+        Module,
+        on_delete=models.CASCADE,
+        related_name="contents",
     )
     content_type = models.ForeignKey(
-        ContentType, on_delete=models.CASCADE,
+        ContentType,
+        on_delete=models.CASCADE,
         limit_choices_to={"model__in": ("text", "video", "image", "file")},
     )
     object_id = models.PositiveIntegerField()
     item = GenericForeignKey('content_type', 'object_id')
     order = OrderField(
-        blank=True, for_fields=["module"], verbose_name="Order", help_text="Order of the content")
+        blank=True,
+        for_fields=["module"],
+        help_text="Order of the content"
+    )
 
     class Meta:
         ordering = ["order"]
@@ -123,10 +168,17 @@ class BaseItem(TimeStampedModel):
     BaseItem model
     """
     title = models.CharField(
-        max_length=200, verbose_name="Title", help_text="Title of the item")
+        max_length=200,
+        verbose_name="Title",
+        help_text="Title of the item"
+    )
     owner = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_related",
-        verbose_name="Owner", help_text="User who created the content")
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_related',
+        verbose_name="Owner",
+        help_text="User who created the content"
+    )
 
     class Meta:
         abstract = True
@@ -137,9 +189,12 @@ class BaseItem(TimeStampedModel):
 
 class Text(BaseItem):
     """
-    Text model
+    Text model to store text content
     """
-    content = models.TextField(verbose_name="Content", help_text="Content of the text")
+    content = models.TextField(
+        verbose_name="Content",
+        help_text="Content of the text"
+    )
 
     class Meta:
         verbose_name = "Text"
@@ -152,9 +207,13 @@ class Text(BaseItem):
 
 class File(BaseItem):
     """
-    File model
+    File model to store files such as PDFs
     """
-    file = models.FileField(upload_to="files", verbose_name="File", help_text="File")
+    file = models.FileField(
+        upload_to="files",
+        verbose_name="File",
+        help_text="File"
+    )
 
     class Meta:
         verbose_name = "File"
@@ -167,9 +226,13 @@ class File(BaseItem):
 
 class Image(BaseItem):
     """
-    Image model
+    Image model to store images
     """
-    image = models.ImageField(upload_to="images", verbose_name="Image", help_text="Image")
+    image = models.FileField(
+        upload_to="images",
+        verbose_name="Image",
+        help_text="Image"
+    )
 
     class Meta:
         verbose_name = "Image"
@@ -182,7 +245,7 @@ class Image(BaseItem):
 
 class Video(BaseItem):
     """
-    Video model
+    Video model to store videos
     """
     url = models.URLField(verbose_name="URL", help_text="URL of the video")
 
@@ -193,4 +256,3 @@ class Video(BaseItem):
 
     def __str__(self):
         return self.title
-
