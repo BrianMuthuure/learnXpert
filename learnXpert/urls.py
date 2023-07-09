@@ -9,6 +9,7 @@ urlpatterns = [
     path("login/", auth_views.LoginView.as_view(template_name='users/login.html'), name="login"),
     path("logout/", auth_views.LogoutView.as_view(template_name='users/logout.html'), name="logout"),
     path("users/", include('apps.users.urls', namespace='users')),
+    path("students/", include('apps.students.urls', namespace='students')),
     path("", include('apps.courses.urls', namespace='courses')),
 ]
 if settings.DEBUG:
