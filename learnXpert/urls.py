@@ -11,6 +11,7 @@ urlpatterns = [
     path("users/", include('apps.users.urls', namespace='users')),
     path("students/", include('apps.students.urls', namespace='students')),
     path("", include('apps.courses.urls', namespace='courses')),
+    path('api/', include('apps.courses.api.urls', namespace='api')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

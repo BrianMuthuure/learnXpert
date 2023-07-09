@@ -28,6 +28,7 @@ CUSTOM_APPS = [
 
 THIRD_PARTY_APPS = [
     'embed_video',
+    'rest_framework',
 ]
 
 LOCAL_APPS = [
@@ -37,6 +38,12 @@ LOCAL_APPS = [
 ]
 
 INSTALLED_APPS = CUSTOM_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+      'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
